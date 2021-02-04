@@ -21,6 +21,7 @@ export default {
       link: this.randomLink(),
     }
   },
+  emits:['throw-data'],
   inject: ['randomTitle', 'randomDesc', 'randomLink'],
   props: {
     foo2: String,
@@ -42,6 +43,7 @@ export default {
         },
         'catalogue-wall'
       )
+      this.clearFields()
     },
   },
 }
@@ -54,6 +56,7 @@ export default {
     display: flex;
     flex-direction: column;
     padding: 2rem;
+
     div {
       margin: 0.5rem 0;
     }
@@ -75,6 +78,16 @@ export default {
     }
     .title {
       font-weight: bold;
+    }
+  }
+}
+
+@media only screen and (max-width: 375px) {
+  .main-wrap{
+    justify-content: center;
+    .form{
+    padding: 0;
+    padding-top: 2rem;
     }
   }
 }

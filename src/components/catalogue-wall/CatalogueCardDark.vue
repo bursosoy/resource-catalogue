@@ -1,11 +1,14 @@
 <template>
   <div class="card-wrap">
     <div class="card">
-      <div class="thumbnail"><slot name="thumbnail"></slot></div>
       <div class="content-wrap">
         <h3 class="title"><slot name="title"></slot></h3>
         <h1 class="desc"><slot name="desc"></slot></h1>
-        <div class="button"><slot name="visitButton"></slot></div>
+      </div>
+      <div class="bottom">
+        <!-- <div class="button"><slot name="visitButton"></slot></div> -->
+        <div class="url"><slot name="url"></slot></div>
+        <div class="thumbnail"><slot name="thumbnail"></slot></div>
       </div>
     </div>
     <slot name="delete"></slot>
@@ -23,18 +26,15 @@ export default {}
 
   .card {
     display: flex;
-    background-color: #eee;
-    color: #262626;
+    flex-direction: column;
+    background-color: #262626;
+    color: #eee;
     margin: 0.5rem;
-    padding: 1rem;
+    padding: 1.2rem;
     border-radius: 0.75rem 0.75rem 0.75rem 0;
     min-height: 10rem;
 
-    .thumbnail{
-      height: 3rem;
-    }
     .content-wrap {
-      margin-left: 1rem;
       display: flex;
       flex-direction: column;
       flex: 1;
@@ -47,17 +47,38 @@ export default {}
       .title {
         margin: 0;
         padding-top: 0.5rem;
-        font-size: 1.2rem;
+        font-size: 1.5rem;
       }
       .desc {
         margin: 0.5rem 0;
-        color: #444;
+        color: #999;
         font-size: 0.9rem;
         font-weight: normal;
       }
+      
+    }
+    .bottom {
+      display: flex;
+      justify-content: space-between;
+      .thumbnail {
+        width: 3rem;
+        height: 3rem;
+      }
       .button {
         display: flex;
-        align-self: flex-end;
+        align-self: center;
+      }
+      .url{
+        align-self: center;
+        cursor: pointer;
+        padding: 0.5rem 0.8rem;
+        background-color: #1a1a1a;
+        border-radius: 0.25rem;
+        color: #aaa;
+        &:hover{
+          background-color: #222;
+          color: #eee;
+        }
       }
     }
   }
