@@ -1,12 +1,12 @@
 <template>
   <div class="main-wrap">
     <div class="form">
-      <div><input class="title" type="text" v-model="title" placeholder="Title here..." /></div>
-      <div><textarea rows="4" cols="70" v-model="desc" placeholder="Description here..."/></div>
-      <div><input type="text" v-model="link" /></div>
-      <div class="buttons">
-        <button @click="clearFields()">Clear</button>
-        <button @click="throwFormData()">Add New</button>
+      <div><input class="title" type="text" v-model="resource.title" placeholder="Title here..." /></div>
+      <div><textarea rows="4" cols="70" v-model="resource.desc" placeholder="Description here..."/></div>
+      <div><input type="text" v-model="resource.link" /></div>
+      <div class="button-wrap">
+        <base-button :btnType="resource.title || resource.desc ? 'blue' : 'blue disabled'"  @click="clearFields()">Clear</base-button>
+        <base-button :btnType="formStatus ? 'blue' : 'blue disabled'" :disabled="!formStatus" @click="throwFormData()">Add New</base-button>
       </div>
     </div>
   </div>
@@ -16,35 +16,45 @@
 export default {
   data() {
     return {
+      resource:{
       title: this.randomTitle(),
       desc: this.randomDesc(),
-      link: this.randomLink(),
+      link: this.randomLink()}
     }
   },
   emits:['throw-data'],
-  inject: ['randomTitle', 'randomDesc', 'randomLink'],
+  inject: ['randomTitle', 'randomDesc', 'randomLink','processData'],
   props: {
     foo2: String,
   },
+  computed:{
+    formStatus(){
+      return !(!this.resource.title || !this.resource.desc)
+    }
+  },
   methods: {
     clearFields(){
-      this.title = '',
-      this.desc = '',
-      this.link = 'http://www.'
+      this.resource.title = '',
+      this.resource.desc = '',
+      this.resource.link = 'http://www.'
     },
-    throwFormData() {
-      if (!this.title || !this.desc) return
-      this.$emit(
-        'throw-data',
-        {
-          title: this.title,
-          desc: this.desc,
-          link: this.link,
-        },
-        'catalogue-wall'
-      )
+    throwFormData(){
+      this.processData(this.resource,'catalogue-wall')
       this.clearFields()
-    },
+    }
+    // throwFormData() {
+    //   if (!this.title || !this.desc) return
+    //   this.$emit(
+    //     'throw-data',
+    //     {
+    //       title: this.title,
+    //       desc: this.desc,
+    //       link: this.link,
+    //     },
+    //     'catalogue-wall'
+    //   )
+    //   this.clearFields()
+    // },
   },
 }
 </script>
@@ -60,7 +70,7 @@ export default {
     div {
       margin: 0.5rem 0;
     }
-    .buttons {
+    .button-wrap {
       align-self: flex-end;
       margin-top: 1.5rem;
       button{

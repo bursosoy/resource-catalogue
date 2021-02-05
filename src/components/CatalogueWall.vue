@@ -1,23 +1,22 @@
 <template>
   <div class="catalogue-wrap">
-    <component :is="activeCard" v-for="item in resourceInfo" :key="item.title">
-      <template v-slot:thumbnail><div class="circle" :style="item.iconURL"></div></template>
+    <component :is="activeCardTheme" v-for="item in resourceInfo" :key="item.title">
+      <template v-slot:thumbnail><base-thumbnail :style="item.iconURL"></base-thumbnail></template>
       <template v-slot:title>{{ item.title }}</template>
       <template v-slot:desc>{{ item.desc }}</template>
-      <template v-slot:url><div @click="visitLink(item.link)">{{ item.link }}</div></template>
-      <template v-slot:visitButton><button @click="visitLink(item.link)">Visit Link</button></template>
-      <template v-slot:delete><div class="delete" @click="deleteResource(item.title)">X</div></template>
+      <template v-if="item.link && item.link !== 'http://www.'" v-slot:url><base-button btnType="url" @click="visitLink(item.link)">{{ item.link }}</base-button></template>
+      <template v-if="item.link && item.link !== 'http://www.'" v-slot:visitButton><base-button btnType="blue" @click="visitLink(item.link)">Visit Link</base-button></template>
+      <template v-slot:delete><base-button btnType="close top-right" @click="deleteResource(item.title)">X</base-button></template>
     </component>
   </div>
 </template>
 
 <script>
-function randomize(upperLimit, lowerLimit = 0) {
-  return Math.floor(Math.random() * (upperLimit - lowerLimit)) + lowerLimit // proper random
-}
-import catalogueCardLight from './../components/catalogue-wall/CatalogueCardLight.vue'
-import catalogueCardDark from './../components/catalogue-wall/CatalogueCardDark.vue'
+import BaseButton from './ui/BaseButton.vue'
+import BaseCard from './ui/BaseCard.vue'
+import BaseThumbnail from './ui/BaseThumbnail.vue'
 export default {
+  components: { BaseButton, BaseThumbnail, BaseCard },
   data() {
     return {
       
@@ -27,15 +26,10 @@ export default {
   inject: ['deleteResource'],
   props: {
     resourceInfo: Array,
-    iconURL: Array,
     isLight: Boolean
   },
   computed:{
-    activeCard(){ return this.isLight ? 'catalogue-cardlight' : 'catalogue-carddark'}
-  },
-  components: {
-    'catalogue-cardlight': catalogueCardLight,
-    'catalogue-carddark': catalogueCardDark,
+    activeCardTheme(){ return this.isLight ? 'catalogue-cardlight' : 'catalogue-carddark'}
   },
   methods: {
     visitLink(link) {
@@ -51,45 +45,5 @@ export default {
   display: flex;
   flex-wrap: wrap;
   padding: 1rem;
-  .circle {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 3rem;
-    min-height: 3rem;
-    border-radius: 50%;
-    color: #999;
-    background: #fff;
-    font-weight: bold;
-    // background-image: url('./../assets/ico1.png');
-    background-size: 2rem;
-    background-position: center;
-    background-repeat: no-repeat;
-  }
-  button {
-    align-self: flex-end;
-  }
-  .delete {
-    background-color: #222;
-    border: 1px #444 dashed;
-    position: absolute;
-    right: 0;
-    top: 0;
-    width: 1.6rem;
-    height: 1.6rem;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-    font-family: Alte Haas Grotesk;
-    font-size: 0.5rem;
-    cursor: pointer;
-
-    &:hover {
-      background-color: #111;
-      transform: scale(1.2);
-    }
-  }
 }
 </style>

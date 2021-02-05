@@ -1,13 +1,13 @@
 <template>
   <div class="card-wrap">
-    <div class="card">
-      <div class="thumbnail"><slot name="thumbnail"></slot></div>
+    <base-card class="card" cardType="light">
+      <div><slot name="thumbnail"></slot></div>
       <div class="content-wrap">
         <h3 class="title"><slot name="title"></slot></h3>
         <h1 class="desc"><slot name="desc"></slot></h1>
-        <div class="button"><slot name="visitButton"></slot></div>
+        <div class="button-wrap"><slot name="visitButton"></slot></div>
       </div>
-    </div>
+    </base-card>
     <slot name="delete"></slot>
   </div>
 </template>
@@ -18,21 +18,17 @@ export default {}
 
 <style lang="scss" scoped>
 .card-wrap {
+  display: flex;
   width: calc(100% / 3);
   position: relative;
+  min-width: -webkit-min-content; // don't shrink beyond content
 
   .card {
     display: flex;
-    background-color: #eee;
-    color: #262626;
     margin: 0.5rem;
     padding: 1rem;
-    border-radius: 0.75rem 0.75rem 0.75rem 0;
     min-height: 10rem;
 
-    .thumbnail{
-      height: 3rem;
-    }
     .content-wrap {
       margin-left: 1rem;
       display: flex;
@@ -48,6 +44,7 @@ export default {}
         margin: 0;
         padding-top: 0.5rem;
         font-size: 1.2rem;
+        color: #262626;
       }
       .desc {
         margin: 0.5rem 0;
@@ -55,9 +52,11 @@ export default {}
         font-size: 0.9rem;
         font-weight: normal;
       }
-      .button {
+      .button-wrap {
         display: flex;
-        align-self: flex-end;
+        flex-direction: column;
+        align-items: flex-end;
+        justify-content: flex-end;
       }
     }
   }

@@ -1,17 +1,16 @@
 <template>
   <div class="card-wrap">
-    <div class="card">
+    <base-card class="card" cardType="dark">
       <div class="content-wrap">
         <h3 class="title"><slot name="title"></slot></h3>
         <h1 class="desc"><slot name="desc"></slot></h1>
       </div>
       <div class="bottom">
-        <!-- <div class="button"><slot name="visitButton"></slot></div> -->
-        <div class="url"><slot name="url"></slot></div>
-        <div class="thumbnail"><slot name="thumbnail"></slot></div>
+        <div class="url-wrap"><slot name="url"></slot></div>
+        <slot name="thumbnail"></slot>
       </div>
-    </div>
-    <slot name="delete"></slot>
+    </base-card>
+    <div class="close"><slot name="delete"></slot></div>
   </div>
 </template>
 
@@ -21,17 +20,16 @@ export default {}
 
 <style lang="scss" scoped>
 .card-wrap {
+  display: flex;
   width: calc(100% / 3);
   position: relative;
+  min-width: -webkit-min-content; // don't shrink beyond content
 
   .card {
     display: flex;
     flex-direction: column;
-    background-color: #262626;
-    color: #eee;
     margin: 0.5rem;
-    padding: 1.2rem;
-    border-radius: 0.75rem 0.75rem 0.75rem 0;
+    padding: 1rem;
     min-height: 10rem;
 
     .content-wrap {
@@ -55,42 +53,31 @@ export default {}
         font-size: 0.9rem;
         font-weight: normal;
       }
-      
     }
     .bottom {
       display: flex;
       justify-content: space-between;
-      .thumbnail {
-        width: 3rem;
-        height: 3rem;
-      }
-      .button {
-        display: flex;
-        align-self: center;
-      }
-      .url{
-        align-self: center;
-        cursor: pointer;
-        padding: 0.5rem 0.8rem;
-        background-color: #1a1a1a;
-        border-radius: 0.25rem;
-        color: #aaa;
-        &:hover{
-          background-color: #222;
-          color: #eee;
-        }
+
+      .url-wrap {
+        align-self: flex-end;
       }
     }
   }
+
+  .close {
+    position: absolute;
+    top: 0;
+    left: 1.5rem;
+  }
 }
 
-@media only screen and (max-width: 800px) {
+@media only screen and (max-width: 930px) {
   .card-wrap {
     width: calc(100% / 2);
   }
 }
 
-@media only screen and (max-width: 550px) {
+@media only screen and (max-width: 630px) {
   .card-wrap {
     width: 100%;
   }
