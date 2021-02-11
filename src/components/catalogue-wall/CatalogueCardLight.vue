@@ -1,10 +1,17 @@
 <template>
   <div class="card-wrap">
-    <base-card class="card" cardType="light">
-      <div><slot name="thumbnail"></slot></div>
+    <slot name="confirmation"></slot>
+    <base-card class="card" :cardType="checkCardType()">
+      <div class="icons">
+        <div class="pin">
+          <slot name="pin"></slot>
+        </div>
+        <slot name="thumbnail"></slot>
+      </div>
       <div class="content-wrap">
         <h3 class="title"><slot name="title"></slot></h3>
         <h1 class="desc"><slot name="desc"></slot></h1>
+        <slot name="hash"></slot>
         <div class="button-wrap"><slot name="visitButton"></slot></div>
       </div>
     </base-card>
@@ -13,7 +20,27 @@
 </template>
 
 <script>
-export default {}
+export default {
+  data() {
+    return {}
+  },
+  props: {
+    theme: String,
+  },
+  methods: {
+    checkCardType() {
+      let cardType = ''
+      if (this.theme === 'smoke') {
+        cardType = {light: true, smoke: true}
+      } else if (this.theme === 'dotted') {
+        cardType = {light: true, dotted: true}
+      } else if (this.theme === 'pattern') {
+        cardType = {light: true, pattern: true}
+      } else cardType = {light: true}
+      return cardType
+    },
+  },
+}
 </script>
 
 <style lang="scss" scoped>
@@ -25,9 +52,19 @@ export default {}
 
   .card {
     display: flex;
-    margin: 0.5rem;
-    padding: 1rem;
+    flex: 1;
     min-height: 10rem;
+
+    .icons {
+      position: relative;
+      .pin {
+        width: 1.2rem;
+        height: 1.2rem;
+        position: absolute;
+        top: -0.3rem;
+        right: -0.3rem;
+      }
+    }
 
     .content-wrap {
       margin-left: 1rem;
@@ -57,6 +94,7 @@ export default {}
         flex-direction: column;
         align-items: flex-end;
         justify-content: flex-end;
+        margin-top: 1rem;
       }
     }
   }

@@ -10,6 +10,7 @@ import catalogueCardDark from './components/catalogue-wall/CatalogueCardDark.vue
 import baseButton from './components/ui/BaseButton.vue' 
 import baseThumbnail from './components/ui/BaseThumbnail.vue' 
 import baseCard from './components/ui/BaseCard.vue'
+import baseDialog from './components/ui/BaseDialog.vue'
 
 const app = createApp(App)
 app.component('the-header', theHeader)
@@ -18,6 +19,7 @@ app.component('catalogue-carddark', catalogueCardDark)
 app.component('base-button', baseButton)
 app.component('base-thumbnail', baseThumbnail)
 app.component('base-card', baseCard)
+app.component('base-dialog', baseDialog)
 
 // register global functions through mixin
 app.mixin({

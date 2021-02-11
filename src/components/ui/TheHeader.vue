@@ -1,6 +1,6 @@
 <template>
 <div class="header-wrap">
-      <div class="toggle-theme" @click="toggleTheme()" :style="getTheme()" v-if="activeComponent==='catalogue-wall'"></div>
+      <div class="toggle-theme" @click="toggleTheme()" :style="getTheme()"></div>
       <h1>Resource Catalogue</h1>
       <nav class="nav-wrap">
         <div v-for="item in tabItems" :key="item" class="item" :class="{'item-active': item.component === activeComponent}" @click="passActiveComponent(item.component)">{{ item.name }}</div>
@@ -43,8 +43,8 @@ export default {
 
   .toggle-theme {
     position: absolute;
-    right: 1rem;
-    top: 1rem;
+    right: 1.5rem;
+    top: 1.5rem;
     width: 3rem;
     height: 1.6rem;
     background-size: contain;
@@ -84,9 +84,10 @@ export default {
 @media only screen and (max-width: 375px) {
   // mobile
   .header-wrap {
-    padding: 0;
+    padding: 2rem 0 0 0;
     h1 {
       text-align: center;
+      // margin-top: 1rem;
     }
     .nav-wrap {
       justify-content: center;

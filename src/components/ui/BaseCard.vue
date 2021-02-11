@@ -5,7 +5,7 @@
 <script>
 export default {
   props: {
-    cardType: String,
+    cardType: Object,
   },
 }
 </script>
@@ -20,10 +20,26 @@ div {
 .dark {
   background-color: #262626;
   color: #eee;
+
 }
 
 .light {
   background-color: #eee;
   color: #262626;
+  background-size: 100%;
+  background-repeat: no-repeat;
+  background-position: bottom;
+}
+
+.smoke{
+  background-image: url('./../../assets/theme-smoke.png');
+}
+
+.dotted{
+  background-image: url('./../../assets/theme-dotted.png');
+}
+
+.pattern{
+  background-image: url('./../../assets/theme-pattern.png');
 }
 </style>

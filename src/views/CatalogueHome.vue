@@ -1,6 +1,15 @@
 <template>
   <div>
-    <the-header :activeComponent="activeComponent" :isLight="isLight" @passedComponent="(component) => {activeComponent=component}"></the-header>
+    <div id="dialogue-container"></div>
+    <the-header
+      :activeComponent="activeComponent"
+      :isLight="isLight"
+      @passedComponent="
+        (component) => {
+          activeComponent = component
+        }
+      "
+    ></the-header>
     <keep-alive><component :is="activeComponent" v-bind="componentProps"></component></keep-alive>
   </div>
 </template>
@@ -13,7 +22,7 @@ export default {
   name: 'CatalogueHome',
   data() {
     return {
-      isLight: true,
+      isLight: false,
       resourceInfo: [],
       activeComponent: 'catalogue-wall',
       tabItems: [
@@ -21,29 +30,34 @@ export default {
         {name: 'Add Resource', component: 'add-resource'},
       ],
       nietzsche:
-        'That which does not kill us makes us stronger. Sometimes people don’t want to hear the truth because they don’t want their illusions destroyed. It is not a lack of love, but a lack of friendship that makes unhappy marriages. Whoever fights monsters should see to it that in the process he does not become a monster. And if you gaze long enough into an abyss, the abyss will gaze back into you. The higher we soar, the smaller we appear to those who cannot fly',
-      linkURLs: ['','http://www.tipidpc.com', 'http://www.medium.com', 'http://www.engadget.com', 'http://www.dailystoic.com','http://www.188bet.com','http://www.youtube.com'],
+        'Nietzsche spoke of “the death of God,” and foresaw the dissolution of traditional religion and metaphysics. Some interpreters of Nietzsche believe he embraced nihilism, rejected philosophical reasoning, and promoted a literary exploration of the human condition, while not being concerned with gaining truth and knowledge in the traditional sense of those terms. However, other interpreters of Nietzsche say that in attempting to counteract the predicted rise of nihilism, he was engaged in a positive program to reaffirm life, and so he called for a radical, naturalistic rethinking of the nature of human existence, knowledge, and morality. On either interpretation, it is agreed that he suggested a plan for “becoming what one is” through the cultivation of instincts and various cognitive faculties, a plan that requires constant struggle with one’s psychological and intellectual inheritances',
+      linkURLs: ['', 'http://www.tipidpc.com', 'http://www.medium.com', 'http://www.engadget.com', 'http://www.dailystoic.com', 'http://www.188bet.com', 'http://www.youtube.com'],
+      themes: ['smoke', 'dotted', 'pattern', 'none']
     }
   },
   provide() {
     return {
-      randomTitle: this.generateTitle,
-      randomDesc: this.generateDesc,
-      randomLink: this.generateLink,
+      generateTitle: this.generateTitle,
+      generateDesc: this.generateDesc,
+      generateLink: this.generateLink,
+      generateTheme: this.generateTheme,
+      generateHashItems: this.generateHashItems,
       deleteResource: this.deleteResource,
       processData: this.processData,
-      toggleTheme: this.toggleTheme
+      toggleTheme: this.toggleTheme,
+      resourceInfo: this.resourceInfo,
+      themes: this.themes,
     }
   },
   components: {
     'catalogue-wall': catalogueWall,
-    'add-resource': addResource
+    'add-resource': addResource,
   },
   computed: {
     iconURL() {
       let iconArray = []
       for (let i = 1; i <= 10; i++) {
-        iconArray.push({'background-image': `url(${require('./../assets/ico'+i+'.png')})`,})
+        iconArray.push({'background-image': `url(${require('./../assets/ico' + i + '.png')})`})
       }
       return iconArray
     },
@@ -53,17 +67,14 @@ export default {
             resourceInfo: this.resourceInfo,
             isLight: this.isLight,
           }
-        : {}
-    },
-    componentEvents(){
-      return {
-        knownEvents: {processData : 'throw-data'}
-        }
+        : {
+            isLight: this.isLight,
+          }
     },
   },
   mounted() {
-    for (let i = 0; i <= this.randomize(10, 4); i++) {
-      let item = {title: this.generateTitle(), desc: this.generateDesc(), link: this.generateLink(), iconURL: this.generateIconURL()}
+    for (let i = 0; i <= this.randomize(16, 4); i++) {
+      let item = {title: this.generateTitle(), desc: this.generateDesc(), link: this.generateLink(), iconURL: this.generateIconURL(), theme: this.generateTheme(), isPinned: this.randomize(2, 0)}
       this.processData(item, this.activeComponent)
     }
   },
@@ -83,7 +94,7 @@ export default {
     },
     generateDesc() {
       let descRaw = this.nietzsche.split('.')
-      return (descRaw[this.randomize(descRaw.length)] + '.').substring(0, 100) + '..'
+      return (descRaw[this.randomize(descRaw.length)] + '.').substring(0, 200) + '..'
     },
     generateLink() {
       return this.linkURLs[this.randomize(this.linkURLs.length)]
@@ -91,11 +102,40 @@ export default {
     generateIconURL() {
       return this.iconURL[this.randomize(this.iconURL.length)]
     },
-    deleteResource(item) {
-      this.resourceInfo = this.resourceInfo.filter((resource) => resource.title !== item)
+    generateTheme() {
+      return this.themes[this.randomize(this.themes.length)]
+    },
+    // deleteResource(item) {
+    //   this.resourceInfo = this.resourceInfo.filter((resource) => resource.title !== item)
+    // },
+    generateHashItems() {
+      let hashRaw = this.nietzsche.split(' ')
+      let hashArray = []
+      for (let i = 0; i < this.randomize(5,2); i++) {
+        let threeWordedHash = []
+        for (let i = 0; i < 3; i++) {
+          let rng = this.randomize(hashRaw.length)
+          threeWordedHash.unshift(hashRaw[rng].toLowerCase().charAt(0).toUpperCase() + hashRaw[rng].slice(1))
+        }
+        hashArray.unshift(
+          threeWordedHash
+            .join('')
+            .replace(/[^\w\s]|_/g, '')
+        )
+      }
+      return hashArray
     },
     processData(info, setComponent) {
-      this.resourceInfo.unshift({title: info.title, desc: info.desc, link: info.link, iconURL: this.generateIconURL()})
+      this.resourceInfo.unshift({
+        title: info.title,
+        desc: info.desc,
+        link: info.link,
+        iconURL: this.generateIconURL(),
+        theme: info.theme,
+        isPinned: info.isPinned,
+        toBeDeleted: 0,
+        hash: info.hash ? info.hash : this.generateHashItems()
+      })
       this.activeComponent = setComponent
       this.$forceUpdate()
     },

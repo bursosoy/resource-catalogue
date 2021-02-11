@@ -1,11 +1,13 @@
 <template>
-  <button :class="btnType"><slot></slot></button>
+<!-- the button below can receive a v-model through modelValue prop -->
+  <button :class="btnType"><slot>{{ modelValue }}</slot></button>
 </template>
 
 <script>
 export default {
   props: {
     btnType: String,
+    modelValue: String
   },
 }
 </script>
@@ -20,6 +22,13 @@ export default {
   &:hover {
     background-color: #009fd9cc;
   }
+}
+
+.link {
+  padding: 0.5rem 1rem;
+  font-weight: bold;
+  background: none;
+  color: #009fd9;
 }
 
 .disabled {
@@ -44,7 +53,7 @@ export default {
 .close {
   background-color: #222;
   color: #eee;
-  border: 1px #444 dashed;
+  border: 1px #777 dashed;
   width: 1.6rem;
   height: 1.6rem;
   border-radius: 50%;

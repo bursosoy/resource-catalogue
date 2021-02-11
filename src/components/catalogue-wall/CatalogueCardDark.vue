@@ -1,12 +1,19 @@
 <template>
   <div class="card-wrap">
-    <base-card class="card" cardType="dark">
+    <slot name="confirmation"></slot>
+    <base-card class="card" :cardType="{dark: true, fiesta: theme === 'xmas'}">
       <div class="content-wrap">
         <h3 class="title"><slot name="title"></slot></h3>
         <h1 class="desc"><slot name="desc"></slot></h1>
+        <slot name="hash"></slot>
       </div>
       <div class="bottom">
-        <div class="url-wrap"><slot name="url"></slot></div>
+        <div class="url-wrap">
+          <div class="pin" v-if="url">
+            <slot name="pin"></slot>
+          </div>
+          <slot name="url"></slot>
+        </div>
         <slot name="thumbnail"></slot>
       </div>
     </base-card>
@@ -15,7 +22,15 @@
 </template>
 
 <script>
-export default {}
+export default {
+  data() {
+    return {}
+  },
+  props: {
+    theme: String,
+    url: String
+  },
+}
 </script>
 
 <style lang="scss" scoped>
@@ -27,9 +42,8 @@ export default {}
 
   .card {
     display: flex;
+    flex: 1;
     flex-direction: column;
-    margin: 0.5rem;
-    padding: 1rem;
     min-height: 10rem;
 
     .content-wrap {
@@ -60,6 +74,14 @@ export default {}
 
       .url-wrap {
         align-self: flex-end;
+        position: relative;
+        .pin{
+          position: absolute;
+          width: 1.2rem;
+          height: 1.2rem;
+          right: -0.5rem;
+          top: -0.5rem;
+        }
       }
     }
   }
