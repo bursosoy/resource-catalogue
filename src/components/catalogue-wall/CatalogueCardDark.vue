@@ -1,7 +1,7 @@
 <template>
   <div class="card-wrap">
-    <slot name="confirmation"></slot>
-    <base-card class="card" :cardType="{dark: true, fiesta: theme === 'xmas'}">
+    <!-- <slot name="confirmation"></slot> -->
+    <base-card class="card" :cardType="{dark: true}">
       <div class="content-wrap">
         <h3 class="title"><slot name="title"></slot></h3>
         <h1 class="desc"><slot name="desc"></slot></h1>
@@ -27,7 +27,7 @@ export default {
     return {}
   },
   props: {
-    theme: String,
+    theme: Object,
     url: String
   },
 }

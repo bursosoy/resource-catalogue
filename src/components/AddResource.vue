@@ -22,7 +22,7 @@
             <label for="theme">Theme:</label>
             <select id="theme" name="theme" v-model="resource.theme">
               <option value="select" disabled selected>Select your option</option>
-              <option v-for="theme in themes" :key="theme" :value="theme">{{theme.charAt(0).toUpperCase() + theme.slice(1)}}</option>
+              <option v-for="theme in bgThemes" :key="theme" :value="theme">{{ theme.name.charAt(0).toUpperCase() + theme.name.slice(1) }}</option>
             </select>
           </div>
           <div class="flex-wrapper">
@@ -33,7 +33,7 @@
                 <label for="yes">Yes</label>
               </div>
               <div>
-                <input type="radio" id="no" name="pin" :value="0" v-model="resource.isPinned"/>
+                <input type="radio" id="no" name="pin" :value="0" v-model="resource.isPinned" />
                 <label for="no">No</label>
               </div>
             </div>
@@ -42,8 +42,8 @@
             <label for="check-selections">Available tags:</label>
             <div id="check-selections" class="radio">
               <div v-for="hash in hashItems" :key="hash">
-                <input type="checkbox" :id="hash" :name="hash" :value="hash" v-model="resource.hash"/>
-                <label :for="hash">#{{hash}}</label>
+                <input type="checkbox" :id="hash" :name="hash" :value="hash" v-model="resource.hash" />
+                <label :for="hash">#{{ hash }}</label>
               </div>
             </div>
           </div>
@@ -58,11 +58,13 @@
         <base-button class="add" :btnType="formStatus ? 'blue' : 'blue disabled'" :disabled="!formStatus" @click="throwFormData">Add New</base-button>
       </div>
     </base-card>
-    <base-dialog dialogSize="dialog25" @dismiss="acknowledgeError" v-if="isErrorExist" :errorMessage="errorMessage">
-      <template #title v-if="errorMessage.priority">
-        <div class="custom-title">{{ errorMessage.title }}</div>
-      </template>
-    </base-dialog>
+    <!-- <teleport to="#dialogue-container">
+      <base-dialog dialogueSize="dialog25" @dismiss="acknowledgeDialogue" v-if="isDialagueOn" :dialogueMessage="dialogueMessage">
+        <template #title v-if="dialogueMessage.priority">
+          <div class="custom-title">{{ dialogueMessage.title }}</div>
+        </template>
+      </base-dialog>
+    </teleport> -->
   </div>
 </template>
 
@@ -74,26 +76,26 @@ export default {
         title: this.generateTitle(),
         desc: this.generateDesc(),
         link: this.generateLink(),
-        theme: 'select',
+        theme: this.bgThemes[0],
         isPinned: 0,
-        hash: []
+        hash: [],
       },
-      isErrorExist: false,
       isAdvanced: false,
-      errorMessage: {
-        title: '',
-        desc: '',
-        cta: {
-          negative: {label: '', action: null},
-          positive: {label: '', action: null},
-        },
-        priority: true,
-      },
-      hashItems: this.generateHashItems()
+      hashItems: this.generateHashItems(),
+      // isDialagueOn: false,
+      // dialogueMessage: {
+      //   title: '',
+      //   desc: '',
+      //   cta: {
+      //     negative: {label: '', action: null},
+      //     positive: {label: '', action: null},
+      //   },
+      //   priority: true,
+      // },
     }
   },
   // emits: ['throw-data'], not emitting anymore, just using injected method
-  inject: ['generateTitle', 'generateDesc', 'generateLink', 'generateTheme', 'processData', 'resourceInfo','themes','generateHashItems'],
+  inject: ['generateTitle', 'generateDesc', 'generateLink', 'generateTheme', 'processData', 'loadData', 'resourceInfo', 'generateHashItems', 'bgThemes', 'isDialagueOn', 'throwDialogue', 'dialogueMessage', 'acknowledgeDialogue'],
   props: {
     isLight: Boolean,
   },
@@ -108,15 +110,15 @@ export default {
         title: '',
         desc: '',
         link: '',
-        theme: 'select',
+        theme: this.bgThemes[0],
         isPinned: 0,
-        hash: []
+        hash: [],
       })
     },
     throwFormData() {
       // check if user did not enter domain name
       if (this.resource.link === 'http://www.') {
-        const error = Object.assign({
+        this.throwDialogue({
           title: 'Not a valid URL!',
           desc: 'Please make sure to fill up the URL field after the www. word. Non-compliance will result in the termination of your contract.',
           cta: {
@@ -125,46 +127,41 @@ export default {
           },
           priority: false,
         })
-        this.throwError(error)
         return
       }
 
       // check if user included domain name extension
       if (this.resource.link && this.resource.link.toLowerCase().indexOf('.com') === -1) {
-        const error = Object.assign({
+        this.throwDialogue({
           title: `'${this.resource.link}' has no domain extension`,
-          desc: 'Please add ".com" for every website URL that you enter!',
+          desc: 'Please add ".com" for every website URL that you enter! Prototype and test end-to-end with the Local Emulator Suite, now with Firebase Authentication Prototype and test end-to-end with the Local Emulator Suite, now with Firebase Authentication',
           cta: {
             negative: {label: 'Dismiss', action: 'dismiss'},
-            positive: {label: 'OK, got it!', action: this.addDomainExt},
+            positive: {label: 'Add Domain Ext', action: this.addDomainExt},
           },
           priority: true,
         })
-        this.throwError(error)
         return
       }
 
-      // check if user has not selected any theme
-      if (this.isAdvanced) {
-        if (this.resource.theme === 'select') {
-          const error = Object.assign({
-            title: 'No themes?',
-            desc: 'Please select at least one from the theme dropdown',
-            cta: {
-              negative: {label: 'Dismiss', action: 'dismiss'},
-              positive: {label: 'OK, got it!', action: 'dismiss'},
-            },
-            priority: false,
-          })
-          this.throwError(error)
-          this.resource.theme = this.generateTheme()
-          return
-        }
-      }
-
       // if all checks are good
-      this.processData(this.resource, 'catalogue-wall')
+      // this.processData(this.resource, 'catalogue-wall')
+
+      // send data to firebase
+      fetch('https://resource-catalogue-default-rtdb.firebaseio.com/catalogue.json', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(this.resource),
+      })
+
       this.clearFields()
+
+      setTimeout(() => {
+        this.refreshData()
+        this.loadData()
+      }, 1000)
     },
     refreshData() {
       this.hashItems = this.generateHashItems()
@@ -172,30 +169,20 @@ export default {
         title: this.generateTitle(),
         desc: this.generateDesc(),
         link: this.generateLink(),
-        theme: 'select',
+        theme: this.generateTheme(),
         isPinned: 0,
-        hash: []
+        hash: [],
       })
     },
-    throwError(error) {
-      this.isErrorExist = true
-      Object.assign(this.errorMessage, error)
-    },
-    acknowledgeError() {
-      this.isErrorExist = false
-    },
     positiveAction() {
-      this.resource.link = 'http://www.fuckyou.com'
-      this.acknowledgeError()
+      this.resource.link = 'http://www.forgetyou.com'
+      this.acknowledgeDialogue()
       this.$refs.titleInput.focus()
     },
     addDomainExt() {
       this.resource.link = this.resource.link + '.com'
-      this.acknowledgeError()
+      this.acknowledgeDialogue()
       this.$refs.titleInput.focus()
-    },
-    negativeAction() {
-      return 'dismiss'
     },
   },
   mounted() {},
@@ -233,7 +220,7 @@ export default {
               &:hover {
                 background-color: #5555554d;
               }
-              
+
               label {
                 margin: 0 0 0 0.2rem;
                 padding: 0.5rem 0;
@@ -291,11 +278,6 @@ export default {
         margin-left: 0.5rem;
       }
     }
-  }
-  .custom-title {
-    color: salmon;
-    font-weight: bold;
-    font-size: 1.2rem;
   }
 }
 

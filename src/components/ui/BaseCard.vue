@@ -1,11 +1,12 @@
 <template>
-  <div :class="cardType"><slot></slot></div>
+  <div :class="cardType" :style="bgTheme"><slot></slot></div>
 </template>
 
 <script>
 export default {
   props: {
     cardType: Object,
+    bgTheme: Object
   },
 }
 </script>
@@ -31,15 +32,16 @@ div {
   background-position: bottom;
 }
 
-.smoke{
-  background-image: url('./../../assets/theme-smoke.png');
-}
+// changed below class names to style so that images can be taken from DB
+// .smoke{
+//   background-image: url('./../../assets/theme-smoke.png');
+// }
 
-.dotted{
-  background-image: url('./../../assets/theme-dotted.png');
-}
+// .dotted{
+//   background-image: url('./../../assets/theme-dotted.png');
+// }
 
-.pattern{
-  background-image: url('./../../assets/theme-pattern.png');
-}
+// .pattern{
+//   background-image: url('./../../assets/theme-pattern.png');
+// }
 </style>

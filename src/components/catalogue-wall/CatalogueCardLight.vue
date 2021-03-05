@@ -1,7 +1,7 @@
 <template>
   <div class="card-wrap">
     <slot name="confirmation"></slot>
-    <base-card class="card" :cardType="checkCardType()">
+    <base-card class="card" :cardType="{light : true}" :bgTheme="theme.style">
       <div class="icons">
         <div class="pin">
           <slot name="pin"></slot>
@@ -25,20 +25,20 @@ export default {
     return {}
   },
   props: {
-    theme: String,
+    theme: Object,
   },
   methods: {
-    checkCardType() {
-      let cardType = ''
-      if (this.theme === 'smoke') {
-        cardType = {light: true, smoke: true}
-      } else if (this.theme === 'dotted') {
-        cardType = {light: true, dotted: true}
-      } else if (this.theme === 'pattern') {
-        cardType = {light: true, pattern: true}
-      } else cardType = {light: true}
-      return cardType
-    },
+    // checkCardType() {
+    //   let cardType = ''
+    //   if (this.theme.name === 'smoke') {
+    //     cardType = {light: true, smoke: true}
+    //   } else if (this.theme.name === 'dotted') {
+    //     cardType = {light: true, dotted: true}
+    //   } else if (this.theme.name === 'pattern') {
+    //     cardType = {light: true, pattern: true}
+    //   } else cardType = {light: true}
+    //   return cardType
+    // },
   },
 }
 </script>

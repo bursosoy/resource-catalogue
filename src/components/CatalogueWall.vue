@@ -7,10 +7,10 @@
       </template>
       <template #title>{{ item.title }} </template>
       <template #desc>{{ item.desc }}</template>
-      <template v-if="item.link.trim() && item.link !== 'http://www.'" #url>
+      <template v-if="item.link && item.link.trim() && item.link !== 'http://www.'" #url>
         <base-button btnType="url" @click="visitLink(item.link)">{{ item.link }}</base-button>
       </template>
-      <template v-if="item.link.trim() && item.link !== 'http://www.'" #visitButton>
+      <template v-if="item.link && item.link.trim() && item.link !== 'http://www.'" #visitButton>
         <base-button btnType="blue" @click="visitLink(item.link)">Visit {{ item.link.slice(11) }}</base-button>
       </template>
       <template #delete v-if="!item.toBeDeleted">
@@ -28,22 +28,21 @@
       </template>
       <template #hash>
         <div class="hash-wrap">
-          <span v-for="hashes in item.hash" :key="hashes"
-            ><span class="hashtag">#{{ hashes }}</span></span
-          >
+          <span v-for="hashes in item.hash" :key="hashes">
+            <span class="hashtag">#{{ hashes }}</span>
+          </span>
         </div>
       </template>
     </component>
   </div>
+  <!-- i'm a ninja -->
 </template>
 
 <script>
-import BaseButton from './ui/BaseButton.vue'
 export default {
-  components: {BaseButton},
-  isErrorExist: false,
   data() {
     return {
+      isDialagueOn: false,
       confirmDelete: 0,
     }
   },
@@ -74,7 +73,7 @@ export default {
       // itemToBeDeleted = 1
       const index = this.resourceInfo.findIndex((resource) => resource.title === itemTitle)
       this.resourceInfo[index].toBeDeleted = 1
-      if (this.confirmDelete || !this.resourceInfo[index].isPinned) {
+      if (this.confirmDelete || !this.resourceInfo[index].isPinned || !this.isLight) {
         this.resourceInfo.splice(index, 1)
       }
     },

@@ -1,29 +1,27 @@
 <template>
-  <teleport to="#dialogue-container">
-    <div class="dialogue-wrap">
-      <dialog open :class="dialogSize">
-        <base-card class="dialog-card" :cardType="{'light' : true}">
-          <slot name="title">
-            <div class="title">{{ errorMessage.title }}</div>
-            <!--this will be added if template for slot is not provided-->
-          </slot>
-          <div class="desc">{{ errorMessage.desc }}</div>
-          <div class="buttons">
-            <div>
-              <base-button btnType="link" @click="errorMessage.cta.negative.action === 'dismiss' ? $emit('dismiss') : errorMessage.cta.negative.action()">{{
-                errorMessage.cta.negative.label
-              }}</base-button>
-            </div>
-            <div>
-              <base-button v-if="errorMessage.cta.positive.action !== 'dismiss'" btnType="blue" @click="errorMessage.cta.positive.action">{{ errorMessage.cta.positive.label }}</base-button>
-            </div>
+  <div class="dialogue-wrap">
+    <dialog open :class="dialogueSize" style="max-width: 50%">
+      <base-card class="dialog-card" :cardType="{light: true}">
+        <slot name="title">
+          <div class="title" :class="{'custom-title' : dialogueMessage.priority}">{{ dialogueMessage.title }}</div>
+          <!--this will be added if template for slot is not provided-->
+        </slot>
+        <div class="desc">{{ dialogueMessage.desc }}</div>
+        <div class="buttons">
+          <div v-if="dialogueMessage.cta.negative">
+            <base-button btnType="link" @click="dialogueMessage.cta.negative.action === 'dismiss' ? $emit('dismiss') : dialogueMessage.cta.negative.action()">{{
+              dialogueMessage.cta.negative.label
+            }}</base-button>
           </div>
-          <base-button btnType="close" class="btn-close" @click="$emit('dismiss')">X</base-button>
-        </base-card>
-      </dialog>
-      <div class="scrim" @click="$emit('dismiss')"></div>
-    </div>
-  </teleport>
+          <div v-if="dialogueMessage.cta.positive">
+            <base-button v-if="dialogueMessage.cta.positive.action !== 'dismiss'" btnType="blue" @click="dialogueMessage.cta.positive.action">{{ dialogueMessage.cta.positive.label }}</base-button>
+          </div>
+        </div>
+        <base-button btnType="close" class="btn-close" @click="$emit('dismiss')">X</base-button>
+      </base-card>
+    </dialog>
+    <div class="scrim" @click="$emit('dismiss')"></div>
+  </div>
 </template>
 
 <script>
@@ -33,8 +31,8 @@ export default {
   },
   emits: ['dismiss'],
   props: {
-    dialogSize: String,
-    errorMessage: Object,
+    dialogueSize: String,
+    dialogueMessage: Object,
   },
 }
 </script>
@@ -55,10 +53,16 @@ export default {
     border: none;
     padding: 0;
     min-width: 16rem;
-    margin-top: calc(100vh * .3);
+    margin-top: calc(100vh * 0.3);
     .dialog-card {
       margin: 0;
       padding: 1.5rem;
+
+      .custom-title {
+        color: rgb(236, 36, 36);
+        font-weight: bold;
+        font-size: 1.2rem;
+      }
 
       .title {
         font-weight: bold;
